@@ -144,7 +144,7 @@ const UserManagement = () => {
                         <option value="estudiante">Estudiante</option>
                         <option value="administrativo">Administrativo</option>
                         <option value="visitante">Visitante</option>
-                        <option value="bibliotecario">Bibliotecario</option>
+                        <option value="vigilante">Vigilante</option>
                     </select>
                     {errors.role && <p className="text-red-500 text-xs italic">{errors.role?.message}</p>}
                 </div>
