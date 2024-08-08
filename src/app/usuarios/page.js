@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import api from '../../api/apiInterceptor';
-import { createUserSchema, updateUserSchema } from '@/validation/userValidator';
+import {createUserSchema, updateUserSchema} from "@/validation/userValidator";
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
@@ -47,9 +47,12 @@ const UserManagement = () => {
 
         try {
             if (editMode) {
+                delete formData._id;
+                delete formData.__v;
+
                 await api.put(`/user/${currentUserId}`, formData);
             } else {
-                await api.post('/user', formData);
+                await api.post('/auth/register', formData); // Aquí cambiamos la ruta
             }
             reset();
             await fetchUsers();
@@ -136,12 +139,12 @@ const UserManagement = () => {
                         className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.role ? 'border-red-500' : ''}`}
                     >
                         <option value="">Select Role</option>
-                        <option value="ADMIN">Admin</option>
-                        <option value="DOCENTE">Docente</option>
-                        <option value="ESTUDIANTE">Estudiante</option>
-                        <option value="ADMINISTRATIVO">Administrativo</option>
-                        <option value="VISITANTE">Visitante</option>
-                        <option value="BIBLIOTECARIO">Bibliotecario</option>
+                        <option value="admin">Admin</option>
+                        <option value="docente">Docente</option>
+                        <option value="estudiante">Estudiante</option>
+                        <option value="administrativo">Administrativo</option>
+                        <option value="visitante">Visitante</option>
+                        <option value="bibliotecario">Bibliotecario</option>
                     </select>
                     {errors.role && <p className="text-red-500 text-xs italic">{errors.role?.message}</p>}
                 </div>
@@ -187,14 +190,14 @@ const UserManagement = () => {
                 <tbody>
                 {users.map(user => (
                     <tr key={user._id}>
-                        <td className="border px-4 py-2">{user.firstName}</td>
-                        <td className="border px-4 py-2">{user.lastName}</td>
-                        <td className="border px-4 py-2">{user.identificacion}</td>
-                        <td className="border px-4 py-2">{user.email}</td>
-                        <td className="border px-4 py-2">{user.role}</td>
-                        <td className="border px-4 py-2">{user.active ? 'Active' : 'Inactive'}</td>
-                        <td className="border px-4 py-2">
-                            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded mr-2" onClick={() => handleEdit(user)}>Edit</button>
+                        <td className="py-2 px-4 border-b">{user.firstName}</td>
+                        <td className="py-2 px-4 border-b">{user.lastName}</td>
+                        <td className="py-2 px-4 border-b">{user.identificacion}</td>
+                        <td className="py-2 px-4 border-b">{user.email}</td>
+                        <td className="py-2 px-4 border-b">{user.role}</td>
+                        <td className="py-2 px-4 border-b">{user.active ? 'Active' : 'Inactive'}</td>
+                        <td className="py-2 px-4 border-b">
+                            <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded mr-2" onClick={() => handleEdit(user)}>Edit</button>
                             <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded" onClick={() => handleDelete(user._id)}>Delete</button>
                         </td>
                     </tr>
