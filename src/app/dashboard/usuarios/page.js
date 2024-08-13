@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import api from '../../api/apiInterceptor';
+import api from '../../../api/apiInterceptor';
 import { createUserSchema, updateUserSchema } from '@/validation/userValidator';
 
 const UserManagement = () => {

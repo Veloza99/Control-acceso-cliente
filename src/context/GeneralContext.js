@@ -5,7 +5,7 @@ import {jwtDecode} from 'jwt-decode';
 import {createContext, useCallback, useContext, useMemo, useState} from "react";
 import api from "@/api/apiInterceptor";
 import {router} from "next/navigation";
-import useLocalStorage from "@/app/componentes/useLocalStorage";
+import useLocalStorage from "@/componentes/useLocalStorage";
 
 
 const GeneralContext = createContext();
