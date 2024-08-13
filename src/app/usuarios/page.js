@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import api from '../../api/apiInterceptor';
-import {createUserSchema, updateUserSchema} from "@/validation/userValidator";
+import { createUserSchema, updateUserSchema } from '@/validation/userValidator';
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
@@ -33,9 +33,9 @@ const UserManagement = () => {
         }
     };
 
-    const onSubmit = async data => {
+    const onSubmit = async (data) => {
         const formData = new FormData();
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach((key) => {
             if (key === 'picProfile') {
                 if (data[key] && data[key].length > 0) {
                     formData.append(key, data[key][0]);
@@ -52,7 +52,7 @@ const UserManagement = () => {
 
                 await api.put(`/user/${currentUserId}`, formData);
             } else {
-                await api.post('/auth/register', formData); // Aquí cambiamos la ruta
+                await api.post('/auth/register', formData);
             }
             reset();
             await fetchUsers();
@@ -63,13 +63,13 @@ const UserManagement = () => {
         }
     };
 
-    const handleEdit = user => {
+    const handleEdit = (user) => {
         setEditMode(true);
         setCurrentUserId(user._id);
         reset(user);
     };
 
-    const handleDelete = async userId => {
+    const handleDelete = async (userId) => {
         try {
             await api.delete(`/user/${userId}`);
             await fetchUsers();
@@ -188,17 +188,27 @@ const UserManagement = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {users.map(user => (
+                {users.map((user) => (
                     <tr key={user._id}>
                         <td className="py-2 px-4 border-b">{user.firstName}</td>
                         <td className="py-2 px-4 border-b">{user.lastName}</td>
                         <td className="py-2 px-4 border-b">{user.identificacion}</td>
                         <td className="py-2 px-4 border-b">{user.email}</td>
                         <td className="py-2 px-4 border-b">{user.role}</td>
-                        <td className="py-2 px-4 border-b">{user.active ? 'Active' : 'Inactive'}</td>
+                        <td className="py-2 px-4 border-b">{user.active ? 'Activada' : 'Bloqueada'}</td>
                         <td className="py-2 px-4 border-b">
-                            <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded mr-2" onClick={() => handleEdit(user)}>Edit</button>
-                            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded" onClick={() => handleDelete(user._id)}>Delete</button>
+                            <button
+                                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline mr-2"
+                                onClick={() => handleEdit(user)}
+                            >
+                                Edit
+                            </button>
+                            <button
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                                onClick={() => handleDelete(user._id)}
+                            >
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 ))}

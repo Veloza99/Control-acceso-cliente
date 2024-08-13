@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+const baseURL = 'http://localhost:3300/api'; // Asegúrate de actualizar la URL base según tu configuración
+
 const api = axios.create({
-    baseURL: 'http://localhost:3300/api', // Cambia esto a tu URL base
+    baseURL, // Utiliza la URL base definida arriba
+    withCredentials: true // Permite el envío de cookies con las solicitudes
 });
 
 api.interceptors.request.use(
@@ -12,7 +15,19 @@ api.interceptors.request.use(
         }
         return config;
     },
-    (error) => {
+    (error) => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        if (error.response) {
+            if (error.response.status === 401 || error.response.status === 403) {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+            return Promise.reject(error.response);
+        }
         return Promise.reject(error);
     }
 );

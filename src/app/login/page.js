@@ -1,27 +1,36 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from "next/navigation";
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { loginSchema } from '@/validation/loginValidator';
-import api from '@/api/apiInterceptor';
+import { loginSchema } from "@/validation/loginValidator";
+
+import { useGeneral } from "@/context/GeneralContext";
 
 const LoginPage = () => {
+    const { user, isAuthenticated, login } = useGeneral();
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(loginSchema),
     });
+    const router = useRouter();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            if (user && user.role !== null && user.role !== undefined) {
+                if (user.role === "admin") {
+                    router.push('/usuarios');
+                } else if (user.role === "docente") {
+                    router.push('/docentes');
+                } else if (user.role === "estudiante") {
+                    router.push('/estudiantes');
+                }
+            }
+        }
+    }, [isAuthenticated, user, router]);
 
     const onSubmit = async (data) => {
-        console.log(data);
-        try {
-            const res = await api.post('/auth/login', data);
-            const token = res.data.token;
-            if (token) {
-                localStorage.setItem('token', token);
-            }
-        } catch (e) {
-            console.log(e);
-        }
+        await login(data.email, data.password);
     };
 
     return (
