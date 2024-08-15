@@ -4,7 +4,7 @@ import {jwtDecode} from 'jwt-decode';
 
 import {createContext, useCallback, useContext, useMemo, useState} from "react";
 import api from "@/api/apiInterceptor";
-import {router} from "next/navigation";
+import { useRouter } from "next/navigation";
 import { navbarItems } from "@/config/navbarItems";
 import useLocalStorage from "@/componentes/useLocalStorage";
 
@@ -17,6 +17,17 @@ export const GeneralProvider = ({ children }) => {
     const [users, setUsers] = useLocalStorage('users', []);
     const [isAuthenticated, setIsAuthenticated] = useLocalStorage('isAuthenticated', false);
 
+    const router = useRouter();
+
+    const handleLogout = useCallback(() => {
+        localStorage.removeItem('token');
+        setUser(null);
+        setUsers([]);
+        setIsAuthenticated(false);
+        if (router) {
+            router.push('/login');
+        }
+    }, [router]);
 
     const checkTokenValidity = useCallback((token) => {
         const decoded = jwtDecode(token);
@@ -27,7 +38,7 @@ export const GeneralProvider = ({ children }) => {
             setIsAuthenticated(true);
             localStorage.setItem('token', token);
         }
-    }, [router]);
+    }, [handleLogout]);
 
 
     const login = useCallback(async (email, password) => {
@@ -39,14 +50,6 @@ export const GeneralProvider = ({ children }) => {
             console.log(e);
         }
     }, [checkTokenValidity]);
-
-    const handleLogout = useCallback(() => {
-        localStorage.removeItem('token');
-        setUser(null);
-        setUsers([]);
-        setIsAuthenticated(false);
-        router.push('/login');
-    }, [router]);
 
     // navbar
     const filteredNavbarItems = useMemo(() => {
