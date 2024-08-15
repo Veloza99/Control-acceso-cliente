@@ -5,6 +5,7 @@ import {jwtDecode} from 'jwt-decode';
 import {createContext, useCallback, useContext, useMemo, useState} from "react";
 import api from "@/api/apiInterceptor";
 import {router} from "next/navigation";
+import { navbarItems } from "@/config/navbarItems";
 import useLocalStorage from "@/componentes/useLocalStorage";
 
 
@@ -32,13 +33,12 @@ export const GeneralProvider = ({ children }) => {
     const login = useCallback(async (email, password) => {
         try {
             const res = await api.post('/auth/login', {email, password});
-            const token = res.data.token
+            const token = res.data.token;
             checkTokenValidity(token);
         } catch (e) {
-            console.log(e)
+            console.log(e);
         }
-    }, [checkTokenValidity
-    ]);
+    }, [checkTokenValidity]);
 
     const handleLogout = useCallback(() => {
         localStorage.removeItem('token');
@@ -48,17 +48,26 @@ export const GeneralProvider = ({ children }) => {
         router.push('/login');
     }, [router]);
 
+    // navbar
+    const filteredNavbarItems = useMemo(() => {
+        if (user && user.role) {
+            return navbarItems.filter(item => item.roles.includes(user.role));
+        }
+        return [];
+    }, [user]);
 
     const value = useMemo(() => ({
         user,
         login,
         logout: handleLogout,
         isAuthenticated,
+        navbarItems: filteredNavbarItems,
     }), [
         user,
         login,
         handleLogout,
         isAuthenticated,
+        filteredNavbarItems
     ]);
 
     return (
