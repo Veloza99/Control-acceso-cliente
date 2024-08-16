@@ -7,6 +7,13 @@ export const navbarItems = [
         link: "/dashboard/inicio"
     },
     {
+        title: "Escaner",
+        description: "Escanea QR",
+        icon: "scan_icon",
+        roles: ["admin", "vigilante"],
+        link: "/dashboard/scanner"
+    },
+    {
         title: "Perfil",
         description: "Maneja tu informacion",
         icon: "perfil_icon",
