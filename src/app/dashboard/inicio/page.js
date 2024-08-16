@@ -12,7 +12,7 @@ const InicioPage = () => {
     const [scanResult, setScanResult] = useState(null);
 
     useEffect(() => {
-        if (user && user.role !== 'admin') {
+        if (user && user.role !== 'vigilante') {
             // Genera el QR con la información del usuario
             const userInfo = JSON.stringify({
                 firstName: user.firstName,
@@ -29,7 +29,7 @@ const InicioPage = () => {
     }, [user]);
 
     const handleGenerateVigilanteQR = () => {
-        if (user && user.role === 'admin') {
+        if (user && user.role === 'vigilante') {
             const vigilanteInfo = JSON.stringify({
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -43,7 +43,7 @@ const InicioPage = () => {
     };
 
     useEffect(() => {
-        if (user && user.role === 'admin') {
+        if (user && user.role === 'vigilante') {
             const scanner = new Html5QrcodeScanner('reader', {
                 qrbox: {
                     width: 250,
@@ -77,7 +77,7 @@ const InicioPage = () => {
 
     return (
         <div className="p-6">
-            {user.role !== 'admin' ? (
+            {user.role !== 'vigilante' ? (
                 <div className="flex flex-col items-center">
                     <Typography variant="h4" component="h1" gutterBottom>
                         Mi Código QR
