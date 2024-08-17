@@ -4,12 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Button, Snackbar, Alert } from '@mui/material';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import api from '../../../api/apiInterceptor';
+import CheckIcon from '@mui/icons-material/Check'; // Asegúrate de que esta importación esté presente
 
 const InicioPage = () => {
     const [scanResult, setScanResult] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
     const [accessGranted, setAccessGranted] = useState(false);
-    const [openSnackbar, setOpenSnackbar] = useState(false); // Estado para controlar el popup
+    const [openSnackbar, setOpenSnackbar] = useState(false); // Estado para manejar el Snackbar
+    const [buttonsVisible, setButtonsVisible] = useState(true); // Estado para manejar la visibilidad de los botones
 
     const initializeScanner = () => {
         const scanner = new Html5QrcodeScanner('reader', {
@@ -63,7 +65,8 @@ const InicioPage = () => {
                 entryTime: new Date().toISOString(),
             });
             setAccessGranted(true);
-            setOpenSnackbar(true); // Mostrar el popup
+            setButtonsVisible(false); // Ocultar botones
+            setOpenSnackbar(true); // Mostrar el Snackbar
         } catch (error) {
             console.error('Error granting access:', error);
         }
@@ -73,10 +76,13 @@ const InicioPage = () => {
         setScanResult(null);
         setUserProfile(null);
         setAccessGranted(false);
+        setButtonsVisible(true); // Mostrar botones si es necesario
     };
 
     const handleCloseSnackbar = () => {
-        setOpenSnackbar(false); // Cerrar el popup
+        setOpenSnackbar(false);
+        setScanResult(null); // Volver a leer el QR
+        setButtonsVisible(true); // Volver a mostrar botones si es necesario
     };
 
     return (
@@ -110,22 +116,24 @@ const InicioPage = () => {
                                 <p className="mt-1 text-lg text-gray-700">{userProfile.role}</p>
                             </div>
                         </div>
-                        <div className="mt-4 flex justify-between">
-                            <Button
-                                variant="contained"
-                                color="success"
-                                onClick={handleGrantAccess}
-                            >
-                                Otorgar Acceso
-                            </Button>
-                            <Button
-                                variant="contained"
-                                color="error"
-                                onClick={handleDenyAccess}
-                            >
-                                Denegar Acceso
-                            </Button>
-                        </div>
+                        {buttonsVisible && (
+                            <div className="mt-4 flex justify-between">
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    onClick={handleGrantAccess}
+                                >
+                                    Otorgar Acceso
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={handleDenyAccess}
+                                >
+                                    Denegar Acceso
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
             ) : (
@@ -146,7 +154,6 @@ const InicioPage = () => {
                     Acceso otorgado correctamente.
                 </Alert>
             </Snackbar>
-
         </div>
     );
 };
