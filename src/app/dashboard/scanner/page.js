@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Typography, Button } from '@mui/material';
+import { Typography, Button, Snackbar, Alert } from '@mui/material';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import api from '../../../api/apiInterceptor';
-import CheckIcon from '@mui/icons-material/Check';
 
 const InicioPage = () => {
     const [scanResult, setScanResult] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
     const [accessGranted, setAccessGranted] = useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false); // Estado para controlar el popup
 
     const initializeScanner = () => {
         const scanner = new Html5QrcodeScanner('reader', {
@@ -63,6 +63,7 @@ const InicioPage = () => {
                 entryTime: new Date().toISOString(),
             });
             setAccessGranted(true);
+            setOpenSnackbar(true); // Mostrar el popup
         } catch (error) {
             console.error('Error granting access:', error);
         }
@@ -72,6 +73,10 @@ const InicioPage = () => {
         setScanResult(null);
         setUserProfile(null);
         setAccessGranted(false);
+    };
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false); // Cerrar el popup
     };
 
     return (
@@ -121,11 +126,6 @@ const InicioPage = () => {
                                 Denegar Acceso
                             </Button>
                         </div>
-                        {accessGranted && (
-                            <div className="mt-4 flex justify-center">
-                                <CheckIcon color="success" fontSize="large" />
-                            </div>
-                        )}
                     </div>
                 </div>
             ) : (
@@ -136,6 +136,17 @@ const InicioPage = () => {
                     </Typography>
                 </div>
             )}
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={3000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }} // Posición en la parte superior derecha
+            >
+                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                    Acceso otorgado correctamente.
+                </Alert>
+            </Snackbar>
+
         </div>
     );
 };
