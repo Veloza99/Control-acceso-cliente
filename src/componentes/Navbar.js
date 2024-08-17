@@ -10,6 +10,7 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import PermDataSettingOutlinedIcon from '@mui/icons-material/PermDataSettingOutlined';
 import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccountOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import QrCodeScannerOutlinedIcon from '@mui/icons-material/QrCodeScannerOutlined';
 
 const Navbar = () => {
     const { user, isAuthenticated, navbarItems } = useGeneral();
@@ -20,6 +21,7 @@ const Navbar = () => {
 
     const iconMap = {
         'inicio_icon': <HomeIcon style={{ color: 'white' }} />,
+        'scan_icon': <QrCodeScannerOutlinedIcon style={{ color: 'white' }} />,
         'perfil_icon': <AssignmentIndIcon style={{ color: 'white' }} />,
         'usuarios_icon': <FolderSharedIcon style={{ color: 'white' }} />,
         'entradas_salidas_icon': <CompareArrowsOutlinedIcon style={{ color: 'white' }} />,
