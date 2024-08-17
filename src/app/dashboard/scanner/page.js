@@ -4,43 +4,43 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Button } from '@mui/material';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import api from '../../../api/apiInterceptor';
-import CheckIcon from '@mui/icons-material/Check'; // Importa el ícono de chulito verde
+import CheckIcon from '@mui/icons-material/Check';
 
 const InicioPage = () => {
     const [scanResult, setScanResult] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
-    const [accessGranted, setAccessGranted] = useState(false); // Estado para mostrar el chulito verde
+    const [accessGranted, setAccessGranted] = useState(false);
 
     useEffect(() => {
-        const scanner = new Html5QrcodeScanner('reader', {
-            qrbox: { width: 250, height: 250 },
-            fps: 5,
-        });
+        if (!document.getElementById('reader').children.length) { // Verifica si ya hay un escáner
+            const scanner = new Html5QrcodeScanner('reader', {
+                qrbox: { width: 250, height: 250 },
+                fps: 5,
+            });
 
-        let isScanning = true;
+            let isScanning = true;
 
-        scanner.render(success, error);
+            scanner.render(success, error);
 
-        function success(result) {
-            if (isScanning) {
-                scanner.clear();
-                const userData = JSON.parse(result);
-                setScanResult(userData);
-                isScanning = false; // Stop further scanning
+            function success(result) {
+                if (isScanning) {
+                    scanner.clear();
+                    const userData = JSON.parse(result);
+                    setScanResult(userData);
+                    isScanning = false;
 
-                // Hacer la solicitud POST con el ID del usuario
-                fetchUserProfile(userData.userId);
+                    fetchUserProfile(userData.userId);
+                }
             }
-        }
 
-        function error(err) {
-            console.warn(err);
-        }
+            function error(err) {
+                console.warn(err);
+            }
 
-        return () => {
-            // Cleanup on unmount
-            scanner.clear();
-        };
+            return () => {
+                scanner.clear();
+            };
+        }
     }, []);
 
     const fetchUserProfile = async (userId) => {
@@ -64,7 +64,7 @@ const InicioPage = () => {
         }
     };
 
-    const handleDenyAccess = async () => {
+    const handleDenyAccess = () => {
         // Implementar lógica para denegar el acceso si es necesario
         console.log('Access denied');
     };
