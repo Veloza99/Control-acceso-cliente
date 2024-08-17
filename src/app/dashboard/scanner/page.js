@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Typography } from '@mui/material';
+import { Typography, Button } from '@mui/material';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import api from '../../../api/apiInterceptor';
+import CheckIcon from '@mui/icons-material/Check'; // Importa el ícono de chulito verde
 
 const InicioPage = () => {
     const [scanResult, setScanResult] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
+    const [accessGranted, setAccessGranted] = useState(false); // Estado para mostrar el chulito verde
 
     useEffect(() => {
         const scanner = new Html5QrcodeScanner('reader', {
@@ -50,6 +52,23 @@ const InicioPage = () => {
         }
     };
 
+    const handleGrantAccess = async () => {
+        try {
+            await api.post('/entry', {
+                userId: userProfile._id,
+                entryTime: new Date().toISOString(),
+            });
+            setAccessGranted(true); // Muestra el chulito verde
+        } catch (error) {
+            console.error('Error granting access:', error);
+        }
+    };
+
+    const handleDenyAccess = async () => {
+        // Implementar lógica para denegar el acceso si es necesario
+        console.log('Access denied');
+    };
+
     return (
         <div className="p-6">
             <Typography variant="h4" component="h1" gutterBottom>
@@ -81,6 +100,27 @@ const InicioPage = () => {
                                 <p className="mt-1 text-lg text-gray-700">{userProfile.role}</p>
                             </div>
                         </div>
+                        <div className="mt-4 flex justify-between">
+                            <Button
+                                variant="contained"
+                                color="success"
+                                onClick={handleGrantAccess}
+                            >
+                                Otorgar Acceso
+                            </Button>
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={handleDenyAccess}
+                            >
+                                Denegar Acceso
+                            </Button>
+                        </div>
+                        {accessGranted && (
+                            <div className="mt-4 flex justify-center">
+                                <CheckIcon color="success" fontSize="large" />
+                            </div>
+                        )}
                     </div>
                 </div>
             ) : (
