@@ -1,21 +1,19 @@
 "use client";
 
-import {jwtDecode} from 'jwt-decode';
-
-import {createContext, useCallback, useContext, useMemo, useState} from "react";
-import api from "@/api/apiInterceptor";
-import { useRouter } from "next/navigation";
-import { navbarItems } from "@/config/navbarItems";
-import useLocalStorage from "@/componentes/useLocalStorage";
-
+import React, { createContext, useCallback, useContext, useMemo, useState, useEffect } from"react";
+import api from"@/api/apiInterceptor";
+import { useRouter } from"next/navigation";
+import useLocalStorage from"@/componentes/useLocalStorage";
+import {navbarItems} from "@/config/navbarItems";
+import {jwtDecode} from "jwt-decode";
 
 const GeneralContext = createContext();
 
 export const GeneralProvider = ({ children }) => {
-
     const [user, setUser] = useLocalStorage('user', null);
     const [users, setUsers] = useLocalStorage('users', []);
     const [isAuthenticated, setIsAuthenticated] = useLocalStorage('isAuthenticated', false);
+    const [token, setToken] = useLocalStorage('token', undefined);
 
     const router = useRouter();
 
@@ -24,34 +22,45 @@ export const GeneralProvider = ({ children }) => {
         setUser(null);
         setUsers([]);
         setIsAuthenticated(false);
-        if (router) {
-            router.push('/login');
-        }
+        router.push('/login');
     }, [router]);
 
     const checkTokenValidity = useCallback((token) => {
-        const decoded = jwtDecode(token);
-        if (decoded.exp * 1000 < Date.now()) {
-            handleLogout();
-        } else {
-            setUser(decoded);
-            setIsAuthenticated(true);
-            localStorage.setItem('token', token);
+        if (token !== null && token !== undefined && token !== '') {
+            try {
+                const decoded = jwtDecode(token);
+                if (decoded.exp * 1000 < Date.now()) {
+                    handleLogout();
+                } else {
+                    setUser(decoded);
+                    setIsAuthenticated(true);
+                    localStorage.setItem('token', token);
+                }
+            } catch (error) {
+                console.error("Invalid token format or error decoding token", error);
+                handleLogout();
+            }
         }
     }, [handleLogout]);
 
+    useEffect(() => {
+        if (token) {
+            checkTokenValidity(token);
+        }
+    }, [token, checkTokenValidity]);
 
     const login = useCallback(async (email, password) => {
         try {
-            const res = await api.post('/auth/login', {email, password});
+            const res = await api.post('/auth/login', { email, password });
             const token = res.data.token;
+            setToken(token);
+            localStorage.setItem('token', token);
             checkTokenValidity(token);
         } catch (e) {
-            console.log(e);
+            console.log("Error during login", e);
         }
     }, [checkTokenValidity]);
 
-    // navbar
     const filteredNavbarItems = useMemo(() => {
         if (user && user.role) {
             return navbarItems.filter(item => item.roles.includes(user.role));
@@ -78,6 +87,8 @@ export const GeneralProvider = ({ children }) => {
             {children}
         </GeneralContext.Provider>
     );
+
+
 };
 
 export const useGeneral = () => useContext(GeneralContext);
