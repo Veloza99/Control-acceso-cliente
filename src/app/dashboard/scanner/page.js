@@ -11,37 +11,41 @@ const InicioPage = () => {
     const [userProfile, setUserProfile] = useState(null);
     const [accessGranted, setAccessGranted] = useState(false);
 
-    useEffect(() => {
-        if (!document.getElementById('reader').children.length) { // Verifica si ya hay un escáner
-            const scanner = new Html5QrcodeScanner('reader', {
-                qrbox: { width: 250, height: 250 },
-                fps: 5,
-            });
+    const initializeScanner = () => {
+        const scanner = new Html5QrcodeScanner('reader', {
+            qrbox: { width: 250, height: 250 },
+            fps: 5,
+        });
 
-            let isScanning = true;
+        let isScanning = true;
 
-            scanner.render(success, error);
+        scanner.render(success, error);
 
-            function success(result) {
-                if (isScanning) {
-                    scanner.clear();
-                    const userData = JSON.parse(result);
-                    setScanResult(userData);
-                    isScanning = false;
-
-                    fetchUserProfile(userData.userId);
-                }
-            }
-
-            function error(err) {
-                console.warn(err);
-            }
-
-            return () => {
+        function success(result) {
+            if (isScanning) {
                 scanner.clear();
-            };
+                const userData = JSON.parse(result);
+                setScanResult(userData);
+                isScanning = false;
+
+                fetchUserProfile(userData.userId);
+            }
         }
-    }, []);
+
+        function error(err) {
+            console.warn(err);
+        }
+
+        return () => {
+            scanner.clear();
+        };
+    };
+
+    useEffect(() => {
+        if (!scanResult) {
+            initializeScanner();
+        }
+    }, [scanResult]);
 
     const fetchUserProfile = async (userId) => {
         try {
@@ -58,15 +62,16 @@ const InicioPage = () => {
                 userId: userProfile._id,
                 entryTime: new Date().toISOString(),
             });
-            setAccessGranted(true); // Muestra el chulito verde
+            setAccessGranted(true);
         } catch (error) {
             console.error('Error granting access:', error);
         }
     };
 
     const handleDenyAccess = () => {
-        // Implementar lógica para denegar el acceso si es necesario
-        console.log('Access denied');
+        setScanResult(null);
+        setUserProfile(null);
+        setAccessGranted(false);
     };
 
     return (
