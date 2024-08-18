@@ -32,14 +32,7 @@ export const navbarItems = [
         description: "Historico de acceso",
         icon: "entradas_salidas_icon",
         roles: ["admin", "vigilante"],
-        link: "/dashboard/controldeacceso"
-    },
-    {
-        title: "Horarios",
-        description: "Gestión de horarios y programación de eventos",
-        icon: "horarios_icon",
-        roles: ["admin", "vigilante"],
-        link: "/dashboard/horarios"
+        link: "/dashboard/historial"
     },
     {
         title: "Cerrar Sesion",
