@@ -11,6 +11,7 @@ const InicioPage = () => {
     const [userProfile, setUserProfile] = useState(null);
     const [accessGranted, setAccessGranted] = useState(false);
     const [openSnackbar, setOpenSnackbar] = useState(false); // Estado para manejar el Snackbar
+    const [snackbarMessage, setSnackbarMessage] = useState(''); // Estado para el mensaje del Snackbar
     const [buttonsVisible, setButtonsVisible] = useState(true); // Estado para manejar la visibilidad de los botones
 
     const initializeScanner = () => {
@@ -66,6 +67,7 @@ const InicioPage = () => {
             });
             setAccessGranted(true);
             setButtonsVisible(false); // Ocultar botones
+            setSnackbarMessage('Acceso otorgado correctamente');
             setOpenSnackbar(true); // Mostrar el Snackbar
         } catch (error) {
             console.error('Error granting access:', error);
@@ -77,6 +79,19 @@ const InicioPage = () => {
         setUserProfile(null);
         setAccessGranted(false);
         setButtonsVisible(true); // Mostrar botones si es necesario
+    };
+
+    const handleRegisterExit = async () => {
+        try {
+            await api.post('/entry/exit', {
+                userId: userProfile._id,
+            });
+            setButtonsVisible(false); // Ocultar botones
+            setSnackbarMessage('Salida registrada correctamente');
+            setOpenSnackbar(true); // Mostrar el Snackbar
+        } catch (error) {
+            console.error('Error registering exit:', error);
+        }
     };
 
     const handleCloseSnackbar = () => {
@@ -132,6 +147,13 @@ const InicioPage = () => {
                                 >
                                     Denegar Acceso
                                 </Button>
+                                <Button
+                                    variant="contained"
+                                    color="info"
+                                    onClick={handleRegisterExit}
+                                >
+                                    Registrar Salida
+                                </Button>
                             </div>
                         )}
                     </div>
@@ -151,7 +173,7 @@ const InicioPage = () => {
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }} // Posición en la parte superior derecha
             >
                 <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-                    Acceso otorgado correctamente.
+                    {snackbarMessage}
                 </Alert>
             </Snackbar>
         </div>
