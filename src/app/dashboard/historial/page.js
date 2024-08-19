@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Typography, Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Snackbar, Alert } from '@mui/material';
-import api from '../../../api/apiInterceptor'; // Asegúrate de que la ruta sea correcta
+import api from '../../../api/apiInterceptor';
 
 const HistorialPage = () => {
     const [identificacion, setIdentificacion] = useState('');
@@ -18,10 +18,8 @@ const HistorialPage = () => {
         setError('');
         setNoEntries(false); // Resetear mensaje de no entradas
         setHistorial([]); // Limpiar historial previo
-
         try {
             const response = await api.get(`/entry/all/${identificacion}`);
-
             if (response.data.length === 0) {
                 setNoEntries(true);
                 setSnackbarMessage('No se encontraron entradas para esta identificación.');
@@ -41,11 +39,28 @@ const HistorialPage = () => {
         setOpenSnackbar(false);
     };
 
-    const formatDate = (dateString) => {
-        return dateString ? new Date(dateString).toLocaleDateString() : 'N/A';
+    const getColorByStatus = (status) => {
+        switch (status) {
+            case 'Pendiente de salida':
+                return 'bg-orange-500';
+            case 'Exitoso':
+                return 'bg-green-500';
+            case 'Sin entrada':
+            case 'Sin salida':
+                return 'bg-yellow-500';
+            default:
+                return 'bg-gray-500';
+        }
     };
-    const formatTime = (dateString) => {
-        return dateString ? new Date(dateString).toLocaleTimeString() : 'N/A';
+
+    const formatDate = (dateTime) => {
+        const date = new Date(dateTime);
+        return date.toLocaleDateString();
+    };
+
+    const formatTime = (dateTime) => {
+        const time = new Date(dateTime);
+        return time.toLocaleTimeString();
     };
 
     return (
@@ -84,23 +99,24 @@ const HistorialPage = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {historial.map((entry, index) => {
-                                // Usar entry.entryTime si existe, de lo contrario entry.exitTime
-                                const date = entry.entryTime ? formatDate(entry.entryTime) : (entry.exitTime ? formatDate(entry.exitTime) : 'N/A');
-                                return (
-                                    <TableRow key={index}>
-                                        <TableCell>{date}</TableCell>
-                                        <TableCell>{formatTime(entry.entryTime)}</TableCell>
-                                        <TableCell>{formatTime(entry.exitTime)}</TableCell>
-                                        <TableCell>{entry.status}</TableCell>
-                                    </TableRow>
-                                );
-                            })}
+                            {historial.map((entry, index) => (
+                                <TableRow key={index}>
+                                    <TableCell>{formatDate(entry.entryTime || entry.exitTime)}</TableCell>
+                                    <TableCell>{entry.entryTime ? formatTime(entry.entryTime) : 'N/A'}</TableCell>
+                                    <TableCell>{entry.exitTime ? formatTime(entry.exitTime) : 'N/A'}</TableCell>
+                                    <TableCell>
+                                        <span
+                                            className={`inline-block px-2 py-1 ${getColorByStatus(entry.status)} text-white rounded-full`}
+                                        >
+                                            {entry.status}
+                                        </span>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
             )}
-
             {/* Snackbar para mensajes */}
             <Snackbar
                 open={openSnackbar}
