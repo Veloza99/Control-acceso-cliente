@@ -1,5 +1,12 @@
 export const navbarItems = [
     {
+        title: "Perfil",
+        description: "Maneja tu informacion",
+        icon: "perfil_icon",
+        roles: ["admin", "docente", "estudiante", "vigilante"],
+        link: "/dashboard/perfil"
+    },
+    {
         title: "Inicio",
         description: "Revisa tu informacion",
         icon: "inicio_icon",
@@ -14,11 +21,11 @@ export const navbarItems = [
         link: "/dashboard/scanner"
     },
     {
-        title: "Perfil",
+        title: "Visitantes",
         description: "Maneja tu informacion",
         icon: "perfil_icon",
         roles: ["admin", "docente", "estudiante", "vigilante"],
-        link: "/dashboard/perfil"
+        link: "/dashboard/visitante"
     },
     {
         title: "Usuarios",
