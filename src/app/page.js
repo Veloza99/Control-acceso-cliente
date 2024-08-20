@@ -22,7 +22,7 @@ export default function Home() {
                         router.replace('/dashboard/scanner');
                         break;
                     case 'usuario':
-                        router.replace('/dashboard/usuario');
+                        router.replace('/dashboard/inicio');
                         break;
                     default:
                         router.replace('/dashboard/inicio');
