@@ -19,7 +19,7 @@ const HistorialPage = () => {
         setNoEntries(false); // Resetear mensaje de no entradas
         setHistorial([]); // Limpiar historial previo
         try {
-            const response = await api.get(`/entry/all/${identificacion}`);
+            const response = await api.get(`/entry/user-all/${identificacion}`);
             if (response.data.length === 0) {
                 setNoEntries(true);
                 setSnackbarMessage('No se encontraron entradas para esta identificación.');

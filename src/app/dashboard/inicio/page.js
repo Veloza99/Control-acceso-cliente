@@ -13,12 +13,7 @@ const InicioPage = () => {
         if (user) {
             // Genera el QR con la información del usuario
             const userInfo = JSON.stringify({
-                firstName: user.firstName,
-                lastName: user.lastName,
                 identificacion: user.identificacion,
-                email: user.email,
-                role: user.role,
-                userId: user.userId,
             });
             setQrCodeData(userInfo);
         }

@@ -31,7 +31,7 @@ const InicioPage = () => {
                 setScanResult(userData);
                 isScanning = false;
 
-                fetchUserProfile(userData.userId);
+                fetchUserProfile(userData.identificacion);
             }
         }
 
@@ -50,9 +50,9 @@ const InicioPage = () => {
         }
     }, [scanResult]);
 
-    const fetchUserProfile = async (userId) => {
+    const fetchUserProfile = async (identificacion) => {
         try {
-            const response = await api.get(`/user/${userId}`);
+            const response = await api.get(`/user/${identificacion}`);
             setUserProfile(response.data);
         } catch (error) {
             console.error('Error fetching user profile:', error);
@@ -61,8 +61,8 @@ const InicioPage = () => {
 
     const handleGrantAccess = async () => {
         try {
-            await api.post('/entry', {
-                userId: userProfile._id,
+            await api.post('/entry/user-entry', {
+                identificacion: userProfile.identificacion,
                 entryTime: new Date().toISOString(),
             });
             setAccessGranted(true);
@@ -83,8 +83,8 @@ const InicioPage = () => {
 
     const handleRegisterExit = async () => {
         try {
-            await api.post('/entry/exit', {
-                userId: userProfile._id,
+            await api.post('/entry/user-exit', {
+                identificacion: userProfile.identificacion,
             });
             setButtonsVisible(false); // Ocultar botones
             setSnackbarMessage('Salida registrada correctamente');
