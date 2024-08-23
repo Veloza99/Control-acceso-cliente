@@ -1,21 +1,27 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Snackbar, Alert, IconButton } from '@mui/material';
+import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Snackbar, Alert, IconButton, TextField } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import api from '../../../api/apiInterceptor'; // Asegúrate de configurar correctamente tu instancia de API
-import { format } from 'date-fns'; // Importar date-fns para formatear fechas
 
 const VisitorHistoryPage = () => {
     const [entries, setEntries] = useState([]);
+    const [filteredEntries, setFilteredEntries] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [searchName, setSearchName] = useState('');
+    const [searchDocument, setSearchDocument] = useState('');
 
     useEffect(() => {
         fetchEntries();
     }, []);
+
+    useEffect(() => {
+        filterEntries();
+    }, [entries, searchName, searchDocument]);
 
     const fetchEntries = async () => {
         setLoading(true);
@@ -31,6 +37,24 @@ const VisitorHistoryPage = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const filterEntries = () => {
+        let filtered = entries;
+
+        if (searchName) {
+            filtered = filtered.filter(entry =>
+                `${entry.visitor.firstName} ${entry.visitor.lastName}`.toLowerCase().includes(searchName.toLowerCase())
+            );
+        }
+
+        if (searchDocument) {
+            filtered = filtered.filter(entry =>
+                entry.visitor.documentNumber.includes(searchDocument)
+            );
+        }
+
+        setFilteredEntries(filtered);
     };
 
     const handleExit = async (documentNumber) => {
@@ -52,7 +76,9 @@ const VisitorHistoryPage = () => {
 
     const formatTime = (dateTime) => {
         const time = new Date(dateTime);
-        return format(time, 'HH:mm'); // Mostrar solo la hora en formato 24 horas
+        const hours = time.getHours().toString().padStart(2, '0');
+        const minutes = time.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`; // Mostrar solo la hora en formato 24 horas
     };
 
     return (
@@ -60,6 +86,24 @@ const VisitorHistoryPage = () => {
             <Typography variant="h4" component="h1" gutterBottom>
                 Historial de Visitantes
             </Typography>
+            <div className="mb-4">
+                <TextField
+                    label="Buscar por nombre"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={searchName}
+                    onChange={(e) => setSearchName(e.target.value)}
+                />
+                <TextField
+                    label="Buscar por documento"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={searchDocument}
+                    onChange={(e) => setSearchDocument(e.target.value)}
+                />
+            </div>
             {loading ? (
                 <CircularProgress />
             ) : (
@@ -78,7 +122,7 @@ const VisitorHistoryPage = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {entries.map((entry) => (
+                                {filteredEntries.map((entry) => (
                                     <TableRow key={entry.visitorId}>
                                         <TableCell>{entry.visitor.firstName} {entry.visitor.lastName}</TableCell>
                                         <TableCell>{entry.visitor.documentType}</TableCell>
