@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Snackbar, Alert, IconButton } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import api from '../../../api/apiInterceptor'; // Asegúrate de configurar correctamente tu instancia de API
+import { format } from 'date-fns'; // Importar date-fns para formatear fechas
 
 const VisitorHistoryPage = () => {
     const [entries, setEntries] = useState([]);
@@ -21,7 +22,9 @@ const VisitorHistoryPage = () => {
         setError('');
         try {
             const response = await api.get('/entry/visitor-all-entries');
-            setEntries(response.data);
+            const today = new Date().toISOString().split('T')[0]; // Obtener la fecha de hoy en formato 'YYYY-MM-DD'
+            const filteredEntries = response.data.filter(entry => entry.entryTime.startsWith(today)); // Filtrar solo las entradas del día de hoy
+            setEntries(filteredEntries);
         } catch (err) {
             console.error('Error fetching entries:', err);
             setError('Error fetching entries.');
@@ -45,6 +48,11 @@ const VisitorHistoryPage = () => {
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
+    };
+
+    const formatTime = (dateTime) => {
+        const time = new Date(dateTime);
+        return format(time, 'HH:mm'); // Mostrar solo la hora en formato 24 horas
     };
 
     return (
@@ -75,7 +83,7 @@ const VisitorHistoryPage = () => {
                                         <TableCell>{entry.visitor.firstName} {entry.visitor.lastName}</TableCell>
                                         <TableCell>{entry.visitor.documentType}</TableCell>
                                         <TableCell>{entry.visitor.documentNumber}</TableCell>
-                                        <TableCell>{new Date(entry.entryTime).toLocaleString()}</TableCell>
+                                        <TableCell>{formatTime(entry.entryTime)}</TableCell>
                                         <TableCell>{entry.status}</TableCell>
                                         <TableCell>
                                             {entry.status === 'Pendiente de salida' && (
