@@ -23,10 +23,10 @@ const LoginPage = () => {
                         router.push('/dashboard/usuarios');
                         break;
                     case "docente":
-                        router.push('/dashboard/docentes');
+                        router.push('/dashboard/inicio');
                         break;
                     case "estudiante":
-                        router.push('/dashboard/estudiantes');
+                        router.push('/dashboard/inicio');
                         break;
                     default:
                         break;

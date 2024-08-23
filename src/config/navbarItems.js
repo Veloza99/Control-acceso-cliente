@@ -24,14 +24,14 @@ export const navbarItems = [
         title: "Visitantes",
         description: "Maneja tu informacion",
         icon: "visitor_icon",
-        roles: ["admin", "docente", "estudiante", "vigilante"],
+        roles: ["admin","vigilante"],
         link: "/dashboard/visitante"
     },
     {
         title: "Usuarios",
         description: "Gestion de usuarios",
         icon: "usuarios_icon",
-        roles: ["admin", "docente", "estudiante"],
+        roles: ["admin"],
         link: "/dashboard/usuarios"
     },
     {
@@ -52,7 +52,7 @@ export const navbarItems = [
         title: "Cerrar Sesion",
         description: "",
         icon: "logout_icon",
-        roles: ["admin", "administrativo"],
+        roles: ["admin", "estudiante", "administrativo"],
         link: "/logout"
     },
 ];
