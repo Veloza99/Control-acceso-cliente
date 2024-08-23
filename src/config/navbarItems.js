@@ -42,6 +42,13 @@ export const navbarItems = [
         link: "/dashboard/historial"
     },
     {
+        title: "Historial visitantes",
+        description: "Historico de visitantes",
+        icon: "entradas_salidas_icon",
+        roles: ["admin", "vigilante"],
+        link: "/dashboard/historialVisitantes"
+    },
+    {
         title: "Cerrar Sesion",
         description: "",
         icon: "logout_icon",
