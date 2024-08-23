@@ -7,7 +7,7 @@ export const navbarItems = [
         link: "/dashboard/perfil"
     },
     {
-        title: "Inicio",
+        title: "Inicio QR",
         description: "Revisa tu informacion",
         icon: "inicio_icon",
         roles: ["admin", "docente", "estudiante"],
@@ -23,7 +23,7 @@ export const navbarItems = [
     {
         title: "Visitantes",
         description: "Maneja tu informacion",
-        icon: "perfil_icon",
+        icon: "visitor_icon",
         roles: ["admin", "docente", "estudiante", "vigilante"],
         link: "/dashboard/visitante"
     },
@@ -35,7 +35,7 @@ export const navbarItems = [
         link: "/dashboard/usuarios"
     },
     {
-        title: "Historial",
+        title: "Historial Entradas",
         description: "Historico de acceso",
         icon: "entradas_salidas_icon",
         roles: ["admin", "vigilante"],
@@ -44,7 +44,7 @@ export const navbarItems = [
     {
         title: "Historial visitantes",
         description: "Historico de visitantes",
-        icon: "entradas_salidas_icon",
+        icon: "entradas_salidas_visitor_icon",
         roles: ["admin", "vigilante"],
         link: "/dashboard/historialVisitantes"
     },

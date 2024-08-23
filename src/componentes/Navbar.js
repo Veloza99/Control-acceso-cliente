@@ -4,13 +4,15 @@ import { useGeneral } from '@/context/GeneralContext';
 import HomeIcon from '@mui/icons-material/Home';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
-import CompareArrowsOutlinedIcon from '@mui/icons-material/CompareArrowsOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import PermDataSettingOutlinedIcon from '@mui/icons-material/PermDataSettingOutlined';
 import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccountOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import QrCodeScannerOutlinedIcon from '@mui/icons-material/QrCodeScannerOutlined';
+import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined';
+import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
+import YoutubeSearchedForOutlinedIcon from '@mui/icons-material/YoutubeSearchedForOutlined';
 
 const Navbar = () => {
     const { user, isAuthenticated, navbarItems } = useGeneral();
@@ -24,7 +26,9 @@ const Navbar = () => {
         'scan_icon': <QrCodeScannerOutlinedIcon style={{ color: 'white' }} />,
         'perfil_icon': <AssignmentIndIcon style={{ color: 'white' }} />,
         'usuarios_icon': <FolderSharedIcon style={{ color: 'white' }} />,
-        'entradas_salidas_icon': <CompareArrowsOutlinedIcon style={{ color: 'white' }} />,
+        'visitor_icon': <AccountBoxOutlinedIcon style={{ color: 'white' }} />,
+        'entradas_salidas_icon': <HistoryOutlinedIcon style={{ color: 'white' }} />,
+        'entradas_salidas_visitor_icon': <YoutubeSearchedForOutlinedIcon style={{ color: 'white' }} />,
         'horarios_icon': <AccessTimeOutlinedIcon style={{ color: 'white' }} />,
         'reportes_icon': <ArticleOutlinedIcon style={{ color: 'white' }} />,
         'configuracion_icon': <PermDataSettingOutlinedIcon style={{ color: 'white' }} />,
