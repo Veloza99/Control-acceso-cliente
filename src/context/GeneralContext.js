@@ -68,18 +68,30 @@ export const GeneralProvider = ({ children }) => {
         return [];
     }, [user]);
 
+    const getImagenPerfil = useCallback(async (imagen) => {
+        try {
+            const response = await api.get(`/static/images/${imagen}`, { responseType: 'blob' });
+            return URL.createObjectURL(response.data);
+        } catch (error) {
+            console.error('Failed to get user profile pic', error);
+            return null;
+        }
+    }, []);
+
     const value = useMemo(() => ({
         user,
         login,
         logout: handleLogout,
         isAuthenticated,
         navbarItems: filteredNavbarItems,
+        getImagenPerfil,
     }), [
         user,
         login,
         handleLogout,
         isAuthenticated,
-        filteredNavbarItems
+        filteredNavbarItems,
+        getImagenPerfil
     ]);
 
     return (

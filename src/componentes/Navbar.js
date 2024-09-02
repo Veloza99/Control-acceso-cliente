@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import useIsClient from '@/componentes/useIsClient';
+import Image from "next/image";
 import Link from "next/link";
 import { useGeneral } from '@/context/GeneralContext';
 import HomeIcon from '@mui/icons-material/Home';
@@ -13,12 +15,29 @@ import QrCodeScannerOutlinedIcon from '@mui/icons-material/QrCodeScannerOutlined
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined';
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
 import YoutubeSearchedForOutlinedIcon from '@mui/icons-material/YoutubeSearchedForOutlined';
+import PersonIcon from '@mui/icons-material/Person'; // Icono de perfil predeterminado
 
 const Navbar = () => {
-    const { user, isAuthenticated, navbarItems } = useGeneral();
+    const { user, isAuthenticated, navbarItems, getImagenPerfil } = useGeneral();
+    const [picProfile, setPicProfile] = useState('');
+    const isClient = useIsClient(); // Usar el hook para verificar si es cliente
 
-    if (!isAuthenticated) {
-        return null; // No mostrar la barra de navegación si no está autenticado
+    // Función para obtener la imagen de perfil del usuario
+    useEffect(() => {
+        const fetchProfileImage = async () => {
+            if (user && user.picProfile) {  // Asumimos que `picProfile` es una propiedad del usuario
+                const image = await getImagenPerfil(user.picProfile);
+                setPicProfile(image);
+            } else {
+                setPicProfile(null);
+            }
+        };
+
+        fetchProfileImage();
+    }, [user, getImagenPerfil]);
+
+    if (!isClient || !isAuthenticated) {
+        return null; // No mostrar la barra de navegación si no está autenticado o no está en el cliente
     }
 
     const iconMap = {
@@ -46,9 +65,11 @@ const Navbar = () => {
                 <p className="text-slate-500">Bienvenido,</p>
                 <Link href="#" className="inline-flex space-x-2 items-center">
                     <span>
-                        <img className="rounded-full w-8 h-8"
-                             src={user?.avatar || "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=128&q=80"}
-                             alt=""/>
+                        {picProfile ? (
+                            <img src={picProfile} alt="picprofile" height="30" width="30" className="rounded-full"/>
+                        ) : (
+                            <PersonIcon style={{ color: 'white' }} className="w-8 h-8" />
+                        )}
                     </span>
                     <span className="text-sm md:text-base font-bold">
                         {user?.firstName || 'User'}
