@@ -36,7 +36,7 @@ const PerfilPage = () => {
                     <div className="flex-shrink-0 mr-6">
                         <p className="block text-xl font-medium text-blue-800">Foto</p>
                         {profileImage ? (
-                            <img src={profileImage} alt="Perfil" className="w-38 h-38 rounded-full" />
+                            <img src={profileImage} alt="Perfil" className="w-32 h-32 rounded-full" />
                         ) : (
                             <div className="w-38 h-38 flex items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-gray-500">
                                 <p>No tiene foto</p>
