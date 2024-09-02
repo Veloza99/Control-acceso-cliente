@@ -15,7 +15,7 @@ import QrCodeScannerOutlinedIcon from '@mui/icons-material/QrCodeScannerOutlined
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined';
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
 import YoutubeSearchedForOutlinedIcon from '@mui/icons-material/YoutubeSearchedForOutlined';
-import PersonIcon from '@mui/icons-material/Person'; // Icono de perfil predeterminado
+import PersonIcon from '@mui/icons-material/Person';
 
 const Navbar = () => {
     const { user, isAuthenticated, navbarItems, getImagenPerfil } = useGeneral();
