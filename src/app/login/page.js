@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { loginSchema } from "@/validation/loginValidator";
-
 import { useGeneral } from "@/context/GeneralContext";
+import Image from 'next/image'; // Importa el componente Image de Next.js
 
 const LoginPage = () => {
     const { user, isAuthenticated, login } = useGeneral();
@@ -14,17 +14,20 @@ const LoginPage = () => {
         resolver: yupResolver(loginSchema),
     });
     const router = useRouter();
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-        if (isAuthenticated) {
+        setIsMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (isMounted && isAuthenticated) {
             if (user && user.role !== null && user.role !== undefined) {
                 switch (user.role) {
                     case "admin":
                         router.push('/dashboard/usuarios');
                         break;
                     case "docente":
-                        router.push('/dashboard/inicio');
-                        break;
                     case "estudiante":
                         router.push('/dashboard/inicio');
                         break;
@@ -33,19 +36,28 @@ const LoginPage = () => {
                 }
             }
         }
-    }, [isAuthenticated, user, router]);
+    }, [isAuthenticated, user, router, isMounted]);
 
     const onSubmit = async (data) => {
         await login(data.email, data.password);
     };
 
+    if (!isMounted) {
+        return null;
+    }
+
     return (
-        <div className="bg-yellow-400 h-screen overflow-hidden flex items-center justify-center">
-            <div className="bg-white lg:w-5/12 md:6/12 w-10/12 shadow-3xl">
+        <div className="bg-blue-900 h-screen overflow-hidden flex items-center justify-center">
+            <div className="bg-white lg:w-5/12 md:w-6/12 w-10/12 shadow-3xl relative">
                 <div className="bg-gray-800 absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full p-4 md:p-8">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="#FFF">
-                        <path d="M0 3v18h24v-18H0zm6.623 7.929l-4.623 5.712v-9.458l4.623 3.746zm-4.141-5.929h19.035l-9.517 7.713-9.518-7.713zm5.694 7.188l3.824 3.099 3.83-3.104 5.612 6.817H7.012l5.513-6.812zm9.208-1.264l4.616-3.741v9.348l-4.616-5.607z" />
-                    </svg>
+                    {/* Imagen del logo desde el backend */}
+                    <Image
+                        src="http://localhost:3300/api/static/images/escudo_unipamplona.jpg" // URL de la imagen del logo
+                        alt="Logo"
+                        width={80}
+                        height={80}
+                        className="rounded-full"
+                    />
                 </div>
                 <form className="p-12 md:p-24" onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex items-center text-lg mb-6 md:mb-8 relative">
