@@ -4,49 +4,47 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Button, Snackbar, Alert } from '@mui/material';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import api from '../../../api/apiInterceptor';
-import CheckIcon from '@mui/icons-material/Check'; // Asegúrate de que esta importación esté presente
+import { useGeneral } from '@/context/GeneralContext';
 
 const InicioPage = () => {
     const [scanResult, setScanResult] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
+    const [profileImage, setProfileImage] = useState(null);
     const [accessGranted, setAccessGranted] = useState(false);
-    const [openSnackbar, setOpenSnackbar] = useState(false); // Estado para manejar el Snackbar
-    const [snackbarMessage, setSnackbarMessage] = useState(''); // Estado para el mensaje del Snackbar
-    const [buttonsVisible, setButtonsVisible] = useState(true); // Estado para manejar la visibilidad de los botones
-
-    const initializeScanner = () => {
-        const scanner = new Html5QrcodeScanner('reader', {
-            qrbox: { width: 250, height: 250 },
-            fps: 5,
-        });
-
-        let isScanning = true;
-
-        scanner.render(success, error);
-
-        function success(result) {
-            if (isScanning) {
-                scanner.clear();
-                const userData = JSON.parse(result);
-                setScanResult(userData);
-                isScanning = false;
-
-                fetchUserProfile(userData.identificacion);
-            }
-        }
-
-        function error(err) {
-            console.warn(err);
-        }
-
-        return () => {
-            scanner.clear();
-        };
-    };
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [buttonsVisible, setButtonsVisible] = useState(true);
+    const { getImagenPerfil } = useGeneral();
 
     useEffect(() => {
         if (!scanResult) {
-            initializeScanner();
+            const scanner = new Html5QrcodeScanner('reader', {
+                qrbox: { width: 250, height: 250 },
+                fps: 5,
+            });
+
+            let isScanning = true;
+
+            scanner.render(success, error);
+
+            function success(result) {
+                if (isScanning) {
+                    scanner.clear();
+                    const userData = JSON.parse(result);
+                    setScanResult(userData);
+                    isScanning = false;
+
+                    fetchUserProfile(userData.identificacion);
+                }
+            }
+
+            function error(err) {
+                console.warn(err);
+            }
+
+            return () => {
+                scanner.clear();
+            };
         }
     }, [scanResult]);
 
@@ -54,6 +52,13 @@ const InicioPage = () => {
         try {
             const response = await api.get(`/user/${identificacion}`);
             setUserProfile(response.data);
+
+            if (response.data.picProfile) {
+                const image = await getImagenPerfil(response.data.picProfile);
+                setProfileImage(image);
+            } else {
+                setProfileImage(null);
+            }
         } catch (error) {
             console.error('Error fetching user profile:', error);
         }
@@ -66,9 +71,9 @@ const InicioPage = () => {
                 entryTime: new Date().toISOString(),
             });
             setAccessGranted(true);
-            setButtonsVisible(false); // Ocultar botones
+            setButtonsVisible(false);
             setSnackbarMessage('Acceso otorgado correctamente');
-            setOpenSnackbar(true); // Mostrar el Snackbar
+            setOpenSnackbar(true);
         } catch (error) {
             console.error('Error granting access:', error);
         }
@@ -78,7 +83,7 @@ const InicioPage = () => {
         setScanResult(null);
         setUserProfile(null);
         setAccessGranted(false);
-        setButtonsVisible(true); // Mostrar botones si es necesario
+        setButtonsVisible(true);
     };
 
     const handleRegisterExit = async () => {
@@ -86,9 +91,9 @@ const InicioPage = () => {
             await api.post('/entry/user-exit', {
                 identificacion: userProfile.identificacion,
             });
-            setButtonsVisible(false); // Ocultar botones
+            setButtonsVisible(false);
             setSnackbarMessage('Salida registrada correctamente');
-            setOpenSnackbar(true); // Mostrar el Snackbar
+            setOpenSnackbar(true);
         } catch (error) {
             console.error('Error registering exit:', error);
         }
@@ -96,62 +101,65 @@ const InicioPage = () => {
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
-        setScanResult(null); // Volver a leer el QR
-        setButtonsVisible(true); // Volver a mostrar botones si es necesario
+        setScanResult(null);
+        setButtonsVisible(true);
     };
 
     return (
         <div className="p-6">
             <Typography variant="h4" component="h1" gutterBottom>
-                Scanear QR
+                Escanear código QR
             </Typography>
             {userProfile ? (
                 <div className="p-6">
                     <h1 className="text-2xl font-bold mb-4">Perfil del Usuario</h1>
                     <div className="bg-white shadow rounded-lg p-6">
-                        <div className="grid grid-cols-1 gap-6">
-                            <div>
-                                <label className="block text-xl font-medium text-blue-800">Nombre</label>
-                                <p className="mt-1 text-lg text-gray-700">{userProfile.firstName}</p>
+                        <div className="flex items-center mb-6">
+                            <div className="flex flex-col">
+                                <div>
+                                    <label className="block text-xl font-medium text-blue-800">Nombre</label>
+                                    <p className="mt-1 text-lg text-gray-700">{userProfile.firstName}</p>
+                                </div>
+                                <div>
+                                    <label className="block text-xl font-medium text-blue-800">Apellido</label>
+                                    <p className="mt-1 text-lg text-gray-700">{userProfile.lastName}</p>
+                                </div>
+                                <div>
+                                    <label className="block text-xl font-medium text-blue-800">Identificación</label>
+                                    <p className="mt-1 text-lg text-gray-700">{userProfile.identificacion}</p>
+                                </div>
+                                <div>
+                                    <label className="block text-xl font-medium text-blue-800">Correo
+                                        Electrónico</label>
+                                    <p className="mt-1 text-lg text-gray-700">{userProfile.email}</p>
+                                </div>
+                                <div>
+                                    <label className="block text-xl font-medium text-blue-800">Rol</label>
+                                    <p className="mt-1 text-lg text-gray-700">{userProfile.role}</p>
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-xl font-medium text-blue-800">Apellido</label>
-                                <p className="mt-1 text-lg text-gray-700">{userProfile.lastName}</p>
-                            </div>
-                            <div>
-                                <label className="block text-xl font-medium text-blue-800">Identificación</label>
-                                <p className="mt-1 text-lg text-gray-700">{userProfile.identificacion}</p>
-                            </div>
-                            <div>
-                                <label className="block text-xl font-medium text-blue-800">Correo Electrónico</label>
-                                <p className="mt-1 text-lg text-gray-700">{userProfile.email}</p>
-                            </div>
-                            <div>
-                                <label className="block text-xl font-medium text-blue-800">Rol</label>
-                                <p className="mt-1 text-lg text-gray-700">{userProfile.role}</p>
+
+                            <div className="flex-shrink-0 mr-6">
+                                <p className="text-blue-800 font-medium mb-2">Foto</p>
+                                {profileImage ? (
+                                    <img src={profileImage} alt="Perfil" className="w-32 h-32 rounded-full"/>
+                                ) : (
+                                    <div
+                                        className="w-32 h-32 flex items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-gray-500">
+                                        <p>No tiene foto</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         {buttonsVisible && (
                             <div className="mt-4 flex justify-between">
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    onClick={handleGrantAccess}
-                                >
+                                <Button variant="contained" color="success" onClick={handleGrantAccess}>
                                     Otorgar Acceso
                                 </Button>
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    onClick={handleDenyAccess}
-                                >
+                                <Button variant="contained" color="error" onClick={handleDenyAccess}>
                                     Denegar Acceso
                                 </Button>
-                                <Button
-                                    variant="contained"
-                                    color="info"
-                                    onClick={handleRegisterExit}
-                                >
+                                <Button variant="contained" color="info" onClick={handleRegisterExit}>
                                     Registrar Salida
                                 </Button>
                             </div>
@@ -170,7 +178,7 @@ const InicioPage = () => {
                 open={openSnackbar}
                 autoHideDuration={3000}
                 onClose={handleCloseSnackbar}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }} // Posición en la parte superior derecha
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
                 <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
                     {snackbarMessage}
