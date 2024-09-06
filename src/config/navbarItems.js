@@ -3,7 +3,7 @@ export const navbarItems = [
         title: "Perfil",
         description: "Maneja tu informacion",
         icon: "perfil_icon",
-        roles: ["admin", "docente", "estudiante", "vigilante"],
+        roles: ["admin", "docente", "estudiante", "vigilante", "administrativo"],
         link: "/dashboard/perfil"
     },
     {
