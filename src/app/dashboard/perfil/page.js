@@ -32,17 +32,7 @@ const PerfilPage = () => {
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">Perfil del Usuario</h1>
             <div className="bg-white shadow rounded-lg p-6">
-                <div className="flex items-center mb-6">
-                    <div className="flex-shrink-0 mr-6">
-                        <p className="block text-xl font-medium text-blue-800">Foto</p>
-                        {profileImage ? (
-                            <img src={profileImage} alt="Perfil" className="w-32 h-32 rounded-full" />
-                        ) : (
-                            <div className="w-38 h-38 flex items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-gray-500">
-                                <p>No tiene foto</p>
-                            </div>
-                        )}
-                    </div>
+                <div className="flex items-center mb-6 gap-6">
                     <div className="flex flex-col">
                         <div>
                             <label className="block text-xl font-medium text-blue-800">Nombre</label>
@@ -61,7 +51,17 @@ const PerfilPage = () => {
                             <p className="mt-1 text-lg text-gray-700">{user.role.toUpperCase()}</p>
                         </div>
                     </div>
+                    <div className="flex-shrink-0 ml-auto mr-6">
+                        {profileImage ? (
+                            <img src={profileImage} alt="Perfil" className="w-32 h-32 rounded-lg border border-gray-300" />
+                        ) : (
+                            <div className="w-32 h-32 flex items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-gray-500">
+                                <p>No tiene foto</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
+
             </div>
         </div>
     );
