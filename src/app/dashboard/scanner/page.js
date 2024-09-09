@@ -70,9 +70,7 @@ const InicioPage = () => {
         try {
             const response = await api.get(`/entry/user-all/${identificacion}`);
             if (response.data.length > 0) {
-                // Ordenar por fecha y hora y tomar el más reciente
-                const sortedHistorial = response.data.sort((a, b) => new Date(b.entryTime) - new Date(a.entryTime));
-                setUserStatus(sortedHistorial[0].status);
+                setUserStatus(response.data[0].status);
             } else {
                 setUserStatus('No tiene entradas registradas');
             }
