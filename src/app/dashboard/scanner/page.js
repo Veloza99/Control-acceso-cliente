@@ -14,6 +14,7 @@ const InicioPage = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [buttonsVisible, setButtonsVisible] = useState(true);
+    const [userStatus, setUserStatus] = useState(''); // Estado para manejar el estado del usuario
     const { getImagenPerfil } = useGeneral();
 
     useEffect(() => {
@@ -35,6 +36,7 @@ const InicioPage = () => {
                     isScanning = false;
 
                     fetchUserProfile(userData.identificacion);
+                    fetchUserStatus(userData.identificacion); // Obtener el estado más reciente
                 }
             }
 
@@ -64,6 +66,34 @@ const InicioPage = () => {
         }
     };
 
+    const fetchUserStatus = async (identificacion) => {
+        try {
+            const response = await api.get(`/entry/user-all/${identificacion}`);
+            if (response.data.length > 0) {
+                // Ordenar por fecha y hora y tomar el más reciente
+                const sortedHistorial = response.data.sort((a, b) => new Date(b.entryTime) - new Date(a.entryTime));
+                setUserStatus(sortedHistorial[0].status);
+            } else {
+                setUserStatus('No tiene entradas registradas');
+            }
+        } catch (error) {
+            console.error('Error fetching user status:', error);
+        }
+    };
+
+    const getColorByStatus = (status) => {
+        switch (status) {
+            case 'Activo':
+                return 'bg-green-500'; // Verde para activo
+            case 'Inactivo':
+                return 'bg-red-500'; // Rojo para inactivo
+            case 'No tiene entradas registradas':
+                return 'bg-gray-500'; // Gris para no registrado
+            default:
+                return 'bg-blue-500'; // Azul por defecto
+        }
+    };
+
     const handleGrantAccess = async () => {
         try {
             await api.post('/entry/user-entry', {
@@ -74,6 +104,8 @@ const InicioPage = () => {
             setButtonsVisible(false);
             setSnackbarMessage('Acceso otorgado correctamente');
             setOpenSnackbar(true);
+            // Volver a obtener el estado después de otorgar acceso
+            fetchUserStatus(userProfile.identificacion);
         } catch (error) {
             console.error('Error granting access:', error);
         }
@@ -84,6 +116,7 @@ const InicioPage = () => {
         setUserProfile(null);
         setAccessGranted(false);
         setButtonsVisible(true);
+        setUserStatus(''); // Reiniciar estado
     };
 
     const handleRegisterExit = async () => {
@@ -94,6 +127,8 @@ const InicioPage = () => {
             setButtonsVisible(false);
             setSnackbarMessage('Salida registrada correctamente');
             setOpenSnackbar(true);
+            // Volver a obtener el estado después de registrar salida
+            fetchUserStatus(userProfile.identificacion);
         } catch (error) {
             console.error('Error registering exit:', error);
         }
@@ -106,16 +141,13 @@ const InicioPage = () => {
     };
 
     return (
-        <div className="p-6">
-            <Typography variant="h4" component="h1" gutterBottom>
-                Escanear código QR
-            </Typography>
+        <div className="p-6 flex items-center justify-center min-h-screen">
             {userProfile ? (
-                <div className="p-6">
-                    <h1 className="text-2xl font-bold mb-4">Perfil del Usuario</h1>
-                    <div className="bg-white shadow rounded-lg p-6">
-                        <div className="flex items-center mb-6">
-                            <div className="flex flex-col">
+                <div className="flex flex-col items-center">
+                    <div className="bg-white shadow rounded-lg p-6 mb-6">
+                        <h1 className="text-2xl font-bold mb-4">Perfil del Usuario</h1>
+                        <div className="flex flex-col items-center">
+                            <div className="mb-6">
                                 <div>
                                     <label className="block text-xl font-medium text-blue-800">Nombre</label>
                                     <p className="mt-1 text-lg text-gray-700">{userProfile.firstName}</p>
@@ -129,8 +161,7 @@ const InicioPage = () => {
                                     <p className="mt-1 text-lg text-gray-700">{userProfile.identificacion}</p>
                                 </div>
                                 <div>
-                                    <label className="block text-xl font-medium text-blue-800">Correo
-                                        Electrónico</label>
+                                    <label className="block text-xl font-medium text-blue-800">Correo Electrónico</label>
                                     <p className="mt-1 text-lg text-gray-700">{userProfile.email}</p>
                                 </div>
                                 <div>
@@ -139,20 +170,27 @@ const InicioPage = () => {
                                 </div>
                             </div>
 
-                            <div className="flex-shrink-0 mr-6">
-                                <p className="text-blue-800 font-medium mb-2">Foto</p>
+                            <div className="mt-1">
+                                <p className="block text-xl font-medium text-blue-800">Foto</p>
                                 {profileImage ? (
-                                    <img src={profileImage} alt="Perfil" className="w-32 h-32 rounded-full"/>
+                                    <img src={profileImage} alt="Perfil" className="w-32 h-32 object-cover"/>
                                 ) : (
                                     <div
-                                        className="w-32 h-32 flex items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-gray-500">
+                                        className="w-32 h-32 flex items-center justify-center rounded border border-gray-300 bg-gray-100 text-gray-500">
                                         <p>No tiene foto</p>
                                     </div>
                                 )}
                             </div>
+
+                            <div className="mt-4">
+                                <p className="block text-xl font-medium text-blue-800">Estado Actual</p>
+                                <span className={`inline-block px-2 py-1 ${getColorByStatus(userStatus)} text-white rounded-full`}>
+                                    {userStatus}
+                                </span>
+                            </div>
                         </div>
                         {buttonsVisible && (
-                            <div className="mt-4 flex justify-between">
+                            <div className="mt-4 flex gap-4">
                                 <Button variant="contained" color="success" onClick={handleGrantAccess}>
                                     Otorgar Acceso
                                 </Button>
@@ -167,7 +205,7 @@ const InicioPage = () => {
                     </div>
                 </div>
             ) : (
-                <div>
+                <div className="flex flex-col items-center">
                     <div id="reader" style={{ width: '100%', maxWidth: '500px', height: 'auto' }}></div>
                     <Typography variant="body1" className="mt-4">
                         Escanea el código QR.
@@ -180,7 +218,7 @@ const InicioPage = () => {
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
-                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                <Alert onClose={handleCloseSnackbar} severity={accessGranted ? 'success' : 'info'} sx={{ width: '100%' }}>
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
