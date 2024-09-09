@@ -141,10 +141,25 @@ const InicioPage = () => {
     return (
         <div className="p-6 flex items-center justify-center min-h-screen">
             {userProfile ? (
-                <div className="flex flex-col items-center">
-                    <div className="bg-white shadow rounded-lg p-6 mb-6">
-                        <h1 className="text-2xl font-bold mb-4">Perfil del Usuario</h1>
-                        <div className="flex flex-col items-center">
+                <div className="bg-white shadow rounded-lg p-6 mb-6">
+                    <div className="flex items-start">
+                        {/* Imagen de Perfil y Foto */}
+
+                        {/* Información del Usuario */}
+                        <div>
+                            <h1 className="text-2xl font-bold mb-4">Perfil del Usuario</h1>
+
+                            <div className="mr-6">
+                                <p className="block text-xl font-medium text-blue-800 mb-2">Foto</p>
+                                {profileImage ? (
+                                    <img src={profileImage} alt="Perfil" className="w-32 h-32 object-cover" />
+                                ) : (
+                                    <div className="w-32 h-32 flex items-center justify-center rounded border border-gray-300 bg-gray-100 text-gray-500">
+                                        <p>No tiene foto</p>
+                                    </div>
+                                )}
+                            </div>
+
                             <div className="mb-6">
                                 <div>
                                     <label className="block text-xl font-medium text-blue-800">Nombre</label>
@@ -168,38 +183,31 @@ const InicioPage = () => {
                                 </div>
                             </div>
 
-                            <div className="mt-1">
-                                <p className="block text-xl font-medium text-blue-800">Foto</p>
-                                {profileImage ? (
-                                    <img src={profileImage} alt="Perfil" className="w-32 h-32 object-cover"/>
-                                ) : (
-                                    <div
-                                        className="w-32 h-32 flex items-center justify-center rounded border border-gray-300 bg-gray-100 text-gray-500">
-                                        <p>No tiene foto</p>
-                                    </div>
-                                )}
-                            </div>
-
+                            {/* Estado Actual */}
                             <div className="mt-4">
                                 <p className="block text-xl font-medium text-blue-800">Estado Actual</p>
-                                <span className={`inline-block px-2 py-1 ${getColorByStatus(userStatus)} text-white rounded-full`}>
+                                <span
+                                    className={`inline-block px-2 py-1 ${getColorByStatus(userStatus)} text-white rounded-full`}
+                                >
                                     {userStatus}
                                 </span>
                             </div>
+
+                            {/* Botones */}
+                            {buttonsVisible && (
+                                <div className="mt-4 flex gap-4">
+                                    <Button variant="contained" color="success" onClick={handleGrantAccess}>
+                                        Otorgar Acceso
+                                    </Button>
+                                    <Button variant="contained" color="error" onClick={handleDenyAccess}>
+                                        Denegar Acceso
+                                    </Button>
+                                    <Button variant="contained" color="info" onClick={handleRegisterExit}>
+                                        Registrar Salida
+                                    </Button>
+                                </div>
+                            )}
                         </div>
-                        {buttonsVisible && (
-                            <div className="mt-4 flex gap-4">
-                                <Button variant="contained" color="success" onClick={handleGrantAccess}>
-                                    Otorgar Acceso
-                                </Button>
-                                <Button variant="contained" color="error" onClick={handleDenyAccess}>
-                                    Denegar Acceso
-                                </Button>
-                                <Button variant="contained" color="info" onClick={handleRegisterExit}>
-                                    Registrar Salida
-                                </Button>
-                            </div>
-                        )}
                     </div>
                 </div>
             ) : (
@@ -216,11 +224,16 @@ const InicioPage = () => {
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
-                <Alert onClose={handleCloseSnackbar} severity={accessGranted ? 'success' : 'info'} sx={{ width: '100%' }}>
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity={accessGranted ? 'success' : 'info'}
+                    sx={{ width: '100%' }}
+                >
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
         </div>
+
     );
 };
 
