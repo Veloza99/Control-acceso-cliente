@@ -14,7 +14,7 @@ export const navbarItems = [
         link: "/dashboard/inicio"
     },
     {
-        title: "Escaner",
+        title: "Escáner",
         description: "Escanea QR",
         icon: "scan_icon",
         roles: ["admin", "vigilante"],
@@ -33,6 +33,13 @@ export const navbarItems = [
         icon: "usuarios_icon",
         roles: ["admin"],
         link: "/dashboard/usuarios"
+    },
+    {
+        title: "Historial por fecha",
+        description: "Historico por fecha",
+        icon: "entradas_salidas_icon",
+        roles: ["admin", "vigilante"],
+        link: "/dashboard/historial-fecha"
     },
     {
         title: "Historial Entradas",

@@ -17,8 +17,11 @@ const VisitorForm = () => {
         documentNumber: '',
         birthDate: '',
         gender: '',
+        motivoVisita: ''
     });
     const [entryDocumentNumber, setEntryDocumentNumber] = useState(''); // Estado para el número de documento de entrada
+    const [motivoVisita, setMotivoVisita] = useState(''); // Estado para el número de documento de entrada
+
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -33,6 +36,10 @@ const VisitorForm = () => {
 
     const handleEntryChange = (e) => {
         setEntryDocumentNumber(e.target.value);
+    };
+
+    const handleMotivoChange = (e) => {
+        setMotivoVisita(e.target.value);
     };
 
     const handleSubmit = async (e) => {
@@ -85,7 +92,7 @@ const VisitorForm = () => {
         <div className="p-6">
             <h2 className="text-2xl font-bold mb-4 text-blue-800">Gestión de Visitantes</h2>
             <div className="mb-6">
-                <button 
+                <button
                     onClick={() => setShowEntryForm(!showEntryForm)}
                     className="w-full bg-blue-800 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 focus:outline-none"
                 >
@@ -101,7 +108,16 @@ const VisitorForm = () => {
                         onChange={handleEntryChange}
                         className="w-full mb-4"
                     />
-                    <button 
+                    <TextField
+                        label="Motivo Visita"
+                        variant="outlined"
+                        value={motivoVisita}
+                        onChange={handleMotivoChange}
+                        required
+                        className="w-full mb-4"
+
+                    />
+                    <button
                         onClick={createEntry}
                         className="w-full bg-blue-800 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 focus:outline-none"
                     >
@@ -110,7 +126,7 @@ const VisitorForm = () => {
                 </div>
             )}
             <div className="mb-6">
-                <button 
+                <button
                     onClick={() => setShowForm(!showForm)}
                     className="w-full bg-green-800 text-white py-3 rounded-lg text-lg font-semibold hover:bg-green-700 focus:outline-none"
                 >
@@ -121,7 +137,8 @@ const VisitorForm = () => {
                 <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6">
                     <div className="grid grid-cols-1 gap-6">
                         <div>
-                            <label htmlFor="firstName" className="block text-xl font-medium text-blue-800">Nombres</label>
+                            <label htmlFor="firstName"
+                                   className="block text-xl font-medium text-blue-800">Nombres</label>
                             <input
                                 type="text"
                                 id="firstName"
@@ -133,7 +150,8 @@ const VisitorForm = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="lastName" className="block text-xl font-medium text-blue-800">Apellidos</label>
+                            <label htmlFor="lastName"
+                                   className="block text-xl font-medium text-blue-800">Apellidos</label>
                             <input
                                 type="text"
                                 id="lastName"
@@ -145,7 +163,8 @@ const VisitorForm = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="documentType" className="block text-xl font-medium text-blue-800">Tipo de Documento</label>
+                            <label htmlFor="documentType" className="block text-xl font-medium text-blue-800">Tipo de
+                                Documento</label>
                             <select
                                 id="documentType"
                                 name="documentType"
@@ -161,7 +180,8 @@ const VisitorForm = () => {
                             </select>
                         </div>
                         <div>
-                            <label htmlFor="documentNumber" className="block text-xl font-medium text-blue-800">Número de Documento</label>
+                            <label htmlFor="documentNumber" className="block text-xl font-medium text-blue-800">Número
+                                de Documento</label>
                             <input
                                 type="text"
                                 id="documentNumber"
@@ -173,7 +193,8 @@ const VisitorForm = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="birthDate" className="block text-xl font-medium text-blue-800">Fecha de Nacimiento</label>
+                            <label htmlFor="birthDate" className="block text-xl font-medium text-blue-800">Fecha de
+                                Nacimiento</label>
                             <input
                                 type="date"
                                 id="birthDate"
@@ -199,10 +220,23 @@ const VisitorForm = () => {
                                 <option value="Female">Femenino</option>
                             </select>
                         </div>
+                        <div>
+                            <label htmlFor="motivoVisita"
+                                   className="block text-xl font-medium text-blue-800">Motivo Visita</label>
+                            <input
+                                type="text"
+                                id="motivoVisita"
+                                name="motivoVisita"
+                                value={visitorData.motivoVisita}
+                                onChange={handleChange}
+                                required
+                                className="mt-1 w-full px-4 py-2 border border-blue-300 rounded-lg text-lg text-gray-700 focus:outline-none focus:border-blue-500"
+                            />
+                        </div>
                     </div>
                     <div className="mt-6">
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             className="w-full bg-blue-800 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 focus:outline-none"
                             disabled={isLoading}
                         >
