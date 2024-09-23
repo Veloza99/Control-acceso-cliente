@@ -117,6 +117,7 @@ const VisitorHistoryPage = () => {
                                     <TableCell>Tipo de Documento</TableCell>
                                     <TableCell>Documento</TableCell>
                                     <TableCell>Hora de Entrada</TableCell>
+                                    <TableCell>Motivo de Visita</TableCell>
                                     <TableCell>Estado</TableCell>
                                     <TableCell>Salida</TableCell>
                                 </TableRow>
@@ -128,6 +129,7 @@ const VisitorHistoryPage = () => {
                                         <TableCell>{entry.visitor.documentType}</TableCell>
                                         <TableCell>{entry.visitor.documentNumber}</TableCell>
                                         <TableCell>{formatTime(entry.entryTime)}</TableCell>
+                                        <TableCell>{entry.motivoVisita}</TableCell>
                                         <TableCell>{entry.status}</TableCell>
                                         <TableCell>
                                             {entry.status === 'Pendiente de salida' && (

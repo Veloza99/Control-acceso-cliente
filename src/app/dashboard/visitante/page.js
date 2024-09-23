@@ -65,9 +65,9 @@ const VisitorForm = () => {
     };
 
     const createEntry = async () => {
-        if (entryDocumentNumber) {
+        if (entryDocumentNumber && motivoVisita) {
             try {
-                await api.post(`/entry/visitor-entry`, { documentNumber: entryDocumentNumber });
+                await api.post(`/entry/visitor-entry`, { documentNumber: entryDocumentNumber, motivoVisita: motivoVisita });
                 setSnackbarMessage('Entrada del visitante creada correctamente!');
                 setSnackbarSeverity('success'); // Tipo de mensaje para éxito
             } catch (err) {
@@ -115,7 +115,6 @@ const VisitorForm = () => {
                         onChange={handleMotivoChange}
                         required
                         className="w-full mb-4"
-
                     />
                     <button
                         onClick={createEntry}
