@@ -29,8 +29,11 @@ const LoginPage = () => {
                         break;
                     case "docente":
                     case "estudiante":
+                    case "administrativo":
                         router.push('/dashboard/inicio');
                         break;
+                    case "vigilante":
+                        router.push('/dashboard/inicio');
                     default:
                         break;
                 }

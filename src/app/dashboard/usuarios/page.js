@@ -139,11 +139,9 @@ const UserManagement = () => {
                         className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.role ? 'border-red-500' : ''}`}
                     >
                         <option value="">Select Role</option>
-                        <option value="admin">Admin</option>
                         <option value="docente">Docente</option>
                         <option value="estudiante">Estudiante</option>
                         <option value="administrativo">Administrativo</option>
-                        <option value="visitante">Visitante</option>
                         <option value="vigilante">Vigilante</option>
                     </select>
                     {errors.role && <p className="text-red-500 text-xs italic">{errors.role?.message}</p>}

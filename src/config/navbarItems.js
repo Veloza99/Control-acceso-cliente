@@ -10,7 +10,7 @@ export const navbarItems = [
         title: "Inicio QR",
         description: "Revisa tu informacion",
         icon: "inicio_icon",
-        roles: ["admin", "docente", "estudiante"],
+        roles: ["admin", "docente", "estudiante","vigilante", "administrativo" ],
         link: "/dashboard/inicio"
     },
     {
@@ -59,7 +59,7 @@ export const navbarItems = [
         title: "Cerrar Sesion",
         description: "",
         icon: "logout_icon",
-        roles: ["admin", "estudiante", "administrativo"],
+        roles: ["admin", "estudiante", "administrativo", "docente", "vigilante"],
         link: "/logout"
     },
 ];
