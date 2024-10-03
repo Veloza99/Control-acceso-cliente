@@ -5,6 +5,7 @@ import { Typography, Button, Snackbar, Alert } from '@mui/material';
 import QrScanner from 'qr-scanner';
 import api from '../../../api/apiInterceptor';
 import { useGeneral } from '@/context/GeneralContext';
+import { QrCodeScanner } from '@mui/icons-material';
 
 const InicioPage = () => {
     const [scanResult, setScanResult] = useState(null);
@@ -15,14 +16,13 @@ const InicioPage = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [buttonsVisible, setButtonsVisible] = useState(true);
     const [userStatus, setUserStatus] = useState('');
-    const [isScanning, setIsScanning] = useState(false); // Nuevo estado para controlar el escaneo
+    const [isScanning, setIsScanning] = useState(false);
     const { getImagenPerfil } = useGeneral();
     const videoRef = useRef(null);
     const qrScannerRef = useRef(null);
 
     useEffect(() => {
         if (!scanResult && videoRef.current && isScanning) {
-            // Inicializar el escáner QR si está activo
             qrScannerRef.current = new QrScanner(videoRef.current, (result) => {
                 handleScanSuccess(result);
             });
@@ -39,7 +39,6 @@ const InicioPage = () => {
 
     const handleScanSuccess = (result) => {
         console.log('QR Code Result:', result);
-
         try {
             const userData = JSON.parse(result);
             setScanResult(userData);
@@ -56,7 +55,6 @@ const InicioPage = () => {
         try {
             const response = await api.get(`/user/${identificacion}`);
             setUserProfile(response.data);
-
             if (response.data.picProfile) {
                 const image = await getImagenPerfil(response.data.picProfile);
                 setProfileImage(image);
@@ -95,14 +93,14 @@ const InicioPage = () => {
     };
 
     const startScanning = () => {
-        setIsScanning(true); // Activar el escaneo
+        setIsScanning(true);
     };
 
     const stopScanning = () => {
         if (qrScannerRef.current) {
             qrScannerRef.current.stop();
         }
-        setIsScanning(false); // Desactivar el escaneo
+        setIsScanning(false);
     };
 
     const handleGrantAccess = async () => {
@@ -152,7 +150,7 @@ const InicioPage = () => {
         setAccessGranted(false);
         setButtonsVisible(true);
         setUserStatus('');
-        startScanning(); // Reiniciar el escaneo cuando se restablezca el estado
+        startScanning();
     };
 
     const handleCloseSnackbar = () => {
@@ -224,27 +222,30 @@ const InicioPage = () => {
                 </div>
             ) : (
                 <div className="flex flex-col items-center">
-                    <video ref={videoRef} style={{ width: '100%', maxWidth: '500px', height: 'auto' }}></video>
-                    <div className="mt-4 flex gap-4">
-                        {isScanning ? (
-                            <Button variant="contained" color="error" onClick={stopScanning}>
-                                Parar Escaneo
-                            </Button>
-                        ) : (
-                            <Button variant="contained" color="primary" onClick={startScanning}>
-                                Empezar Escaneo
-                            </Button>
-                        )}
+                    <div className="border rounded-lg p-6 shadow-lg bg-white flex flex-col items-center">
+                        <video ref={videoRef} style={{ width: '100%', maxWidth: '500px', height: 'auto' }}></video>
+                        <div className="mt-4 flex flex-col items-center text-center">
+                            {/* Mostrar solo el botón de parar si está escaneando */}
+                            {isScanning ? (
+                                <Button variant="contained" color="error" onClick={stopScanning}>
+                                    Parar Escaneo
+                                </Button>
+                            ) : (
+                                <>
+                                    <QrCodeScanner fontSize="large" color="primary" style={{ fontSize: '60px' }} />
+                                    <Typography variant="h6" className="mt-2 text-lg">Escanea el código QR</Typography>
+                                    <Button variant="contained" color="primary" onClick={startScanning} className="mt-4">
+                                        Iniciar Escaneo
+                                    </Button>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={3000}
-                onClose={handleCloseSnackbar}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            >
-                <Alert onClose={handleCloseSnackbar} severity={accessGranted ? 'success' : 'info'} sx={{ width: '100%' }}>
+
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity="info" sx={{ width: '100%' }}>
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
