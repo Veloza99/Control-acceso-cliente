@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Typography, Button, Snackbar, Alert } from '@mui/material';
+import { Button, Snackbar, Alert } from '@mui/material';
 import QrScanner from 'qr-scanner';
 import api from '../../../api/apiInterceptor';
 import { useGeneral } from '@/context/GeneralContext';
@@ -48,6 +48,19 @@ const InicioPage = () => {
             console.error('Error parsing QR code result:', error);
             setSnackbarMessage('Código QR inválido. Inténtalo de nuevo.');
             setOpenSnackbar(true);
+        }
+    };
+
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = async () => {
+                const imageDataUrl = reader.result;
+                const result = await QrScanner.scanImage(imageDataUrl);
+                handleScanSuccess(result);
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -223,28 +236,32 @@ const InicioPage = () => {
             ) : (
                 <div className="flex flex-col items-center">
                     <div className="border rounded-lg p-6 shadow-lg bg-white flex flex-col items-center">
+                        {/* Mostrar el ícono de QR más grande y centrado */}
+                        {!isScanning && (
+                            <QrCodeScanner style={{ fontSize: '200px', color: '#1976d2', marginBottom: '5px' }} />
+                        )}
                         <video ref={videoRef} style={{ width: '100%', maxWidth: '500px', height: 'auto' }}></video>
                         <div className="mt-4 flex flex-col items-center text-center">
-                            {/* Mostrar solo el botón de parar si está escaneando */}
                             {isScanning ? (
-                                <Button variant="contained" color="error" onClick={stopScanning}>
-                                    Parar Escaneo
+                                <Button variant="outlined" color="error" onClick={stopScanning}>
+                                    Detener Escaneo
                                 </Button>
                             ) : (
-                                <>
-                                    <QrCodeScanner fontSize="large" color="primary" style={{ fontSize: '60px' }} />
-                                    <Typography variant="h6" className="mt-2 text-lg">Escanea el código QR</Typography>
-                                    <Button variant="contained" color="primary" onClick={startScanning} className="mt-4">
-                                        Iniciar Escaneo
-                                    </Button>
-                                </>
+                                <Button variant="outlined" color="primary" onClick={startScanning}>
+                                    Iniciar Escaneo
+                                </Button>
                             )}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                style={{ display: isScanning ? 'none' : 'block', marginTop: '16px' }}
+                            />
                         </div>
                     </div>
                 </div>
             )}
-
-            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={handleCloseSnackbar} severity="info" sx={{ width: '100%' }}>
                     {snackbarMessage}
                 </Alert>
