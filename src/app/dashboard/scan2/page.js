@@ -113,7 +113,9 @@ const InicioPage = () => {
         if (qrScannerRef.current) {
             qrScannerRef.current.stop();
         }
-        setIsScanning(false);
+        setTimeout(() => {
+            setIsScanning(false);
+        }, 1000);
     };
 
     const handleGrantAccess = async () => {
@@ -163,7 +165,6 @@ const InicioPage = () => {
         setAccessGranted(false);
         setButtonsVisible(true);
         setUserStatus('');
-        startScanning();
     };
 
     const handleCloseSnackbar = () => {
